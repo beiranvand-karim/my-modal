@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import * as $ from 'jquery';
 import {ModalService} from '../services/modal.service';
 
@@ -12,49 +12,41 @@ export class ModalComponent implements OnInit, OnDestroy {
   @Input() id: string;
   private element: JQuery;
 
-  constructor(private modalService: ModalService, private el: ElementRef) {
+  constructor(private modalService: ModalService, private el: ElementRef, private renderer: Renderer2) {
     this.element = $(el.nativeElement);
   }
 
   ngOnInit(): void {
-    const modal = this;
 
-    // ensure id attribute exists
+    const modal = this;
     if (!this.id) {
       console.error('modal must have an id');
       return;
     }
 
-    // move element to bottom of page (just before </body>) so it can be displayed above everything else
-    this.element.appendTo('body');
+    document.body.appendChild(this.el.nativeElement);
 
-    // close modal on background click
-    this.element.on('click', function (e: any) {
+    this.renderer.listen(this.el.nativeElement, 'click', (e) => {
       const target = $(e.target);
       if (!target.closest('.modal-body').length) {
         modal.close();
       }
     });
 
-    // add self (this modal instance) to the modal service so it's accessible from controllers
     this.modalService.add(this);
   }
 
-  // remove self from modal service when directive is destroyed
   ngOnDestroy(): void {
     this.modalService.remove(this.id);
-    this.element.remove();
   }
 
-  // open modal
   open(): void {
-    this.element.show();
-    $('body').addClass('modal-open');
+    this.el.nativeElement.style.display = 'inline';
+    document.body.classList.add('modal-open');
   }
 
-  // close modal
   close(): void {
-    this.element.hide();
-    $('body').removeClass('modal-open');
+    this.el.nativeElement.style.display = 'none';
+    document.body.classList.remove('modal-open');
   }
 }
