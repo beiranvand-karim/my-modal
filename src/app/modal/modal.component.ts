@@ -10,15 +10,16 @@ import {ModalService} from '../services/modal.service';
 export class ModalComponent implements OnInit, OnDestroy {
 
   @Input() id: string;
-  private element: JQuery;
 
-  constructor(private modalService: ModalService, private el: ElementRef, private renderer: Renderer2) {
-    this.element = $(el.nativeElement);
+  constructor(
+    private modalService: ModalService,
+    private el: ElementRef,
+    private renderer: Renderer2
+  ) {
   }
 
   ngOnInit(): void {
 
-    const modal = this;
     if (!this.id) {
       console.error('modal must have an id');
       return;
@@ -29,7 +30,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     this.renderer.listen(this.el.nativeElement, 'click', (e) => {
       const target = $(e.target);
       if (!target.closest('.modal-body').length) {
-        modal.close();
+        this.close();
       }
     });
 
