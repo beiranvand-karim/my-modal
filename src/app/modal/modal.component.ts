@@ -1,5 +1,4 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
-import * as $ from 'jquery';
 import {ModalService} from '../services/modal.service';
 
 @Component({
@@ -28,8 +27,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     document.body.appendChild(this.el.nativeElement);
 
     this.renderer.listen(this.el.nativeElement, 'click', (e) => {
-      const target = $(e.target);
-      if (!target.closest('.modal-body').length) {
+      if (!e.target.closest('.modal-body')) {
         this.close();
       }
     });
